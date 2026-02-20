@@ -3,67 +3,6 @@
 # Common functions for all install scripts
 # This file is sourced by bootstrap.sh before running component installers
 
-# Prevent multiple sourcing
-[[ -n "${COMMON_SH_LOADED:-}" ]] && return 0
-COMMON_SH_LOADED=1
-
-# Colors for output (only set if not already set)
-if [[ -z "${RED:-}" ]]; then
-    readonly RED='\033[0;31m'
-    readonly GREEN='\033[0;32m'
-    readonly YELLOW='\033[1;33m'
-    readonly BLUE='\033[0;34m'
-    readonly NC='\033[0m' # No Color
-fi
-
-# Logging functions
-log() {
-    echo -e "${GREEN}[INFO]${NC} $1"
-}
-
-warn() {
-    echo -e "${YELLOW}[WARN]${NC} $1"
-}
-
-debug() {
-    echo -e "${BLUE}[DEBUG]${NC} $1"
-}
-
-error_exit() {
-    echo -e "${RED}ERROR: $1${NC}" >&2
-    exit 1
-}
-
-# Initialize directories (only set if not already set)
-if [[ -z "${SCRIPT_DIR:-}" ]]; then
-    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-fi
-if [[ -z "${BACKUPS_DIR:-}" ]]; then
-    readonly BACKUPS_DIR="${SCRIPT_DIR}/../backups"
-fi
-
-# Ensure DRY_RUN is set
-DRY_RUN="${DRY_RUN:-false}"
-
-# Detect OS and set package manager
-detect_os() {
-    if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-        if command -v apt-get >/dev/null 2>&1; then
-            export OS_TYPE="ubuntu"
-            export PKG_MANAGER="apt"
-        else
-            error_exit "Unsupported Linux distribution. Only Ubuntu is supported."
-        fi
-    elif [[ "$OSTYPE" == "darwin"* ]]; then
-        export OS_TYPE="macos"
-        export PKG_MANAGER="brew"
-    else
-        error_exit "Unsupported operating system: $OSTYPE"
-    fi
-    
-    debug "Detected OS: $OS_TYPE with package manager: $PKG_MANAGER"
-}
-
 # File operation functions
 backup_file() {
     local file="$1"
@@ -292,7 +231,6 @@ check_system_requirements() {
 
 # Initialize common variables and checks
 init_common() {
-    detect_os
     detect_shell
     check_system_requirements
     

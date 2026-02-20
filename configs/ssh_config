@@ -1,0 +1,17 @@
+# SSH configuration template
+# This file is used as a reference, actual config is written to ~/.ssh/config
+
+# GitHub configuration example
+Host github-dev
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/id_ed25519_github_dev
+    IdentitiesOnly yes
+
+# Common SSH settings
+Host *
+    ServerAliveInterval 60
+    ServerAliveCountMax 3
+    ControlMaster auto
+    ControlPath ~/.ssh/sockets/%r@%h-%p
+    ControlPersist 600

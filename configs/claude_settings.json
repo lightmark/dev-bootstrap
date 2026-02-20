@@ -1,0 +1,218 @@
+{
+  "claude_teams": {
+    "enabled": true,
+    "workspace_access": "unrestricted"
+  },
+  "workspace": {
+    "type": "development_workspace",
+    "name": "development_environment",
+    "description": "Personal development workspace with full Claude Teams access"
+  },
+  "permissions": {
+    "read": {
+      "enabled": true,
+      "patterns": [
+        "**/*.sh",
+        "**/*.py", 
+        "**/*.js",
+        "**/*.ts",
+        "**/*.go",
+        "**/*.rs",
+        "**/*.java",
+        "**/*.cpp",
+        "**/*.c",
+        "**/*.h",
+        "**/*.md",
+        "**/*.json",
+        "**/*.yaml",
+        "**/*.yml",
+        "**/*.toml",
+        "**/*.conf",
+        "**/*.cfg",
+        "**/*.ini",
+        "**/*.txt",
+        "**/*.sql",
+        "**/*.html",
+        "**/*.css",
+        "**/*.scss",
+        "**/*.vue",
+        "**/*.jsx",
+        "**/*.tsx",
+        "**/Dockerfile*",
+        "**/docker-compose*.yml",
+        "**/Makefile",
+        "**/README*",
+        "**/LICENSE*",
+        "**/.env.example",
+        "**/.gitignore",
+        "**/.claude/**"
+      ],
+      "exclude": [
+        "**/.git/**",
+        "**/node_modules/**",
+        "**/vendor/**",
+        "**/target/**",
+        "**/dist/**",
+        "**/build/**",
+        "**/*.log",
+        "**/.env",
+        "**/.env.local",
+        "**/.env.production",
+        "**/secrets/**",
+        "**/.ssh/id_*",
+        "**/.aws/credentials",
+        "**/.docker/config.json"
+      ]
+    },
+    "write": {
+      "enabled": true,
+      "patterns": [
+        "**/*.sh",
+        "**/*.py",
+        "**/*.js", 
+        "**/*.ts",
+        "**/*.go",
+        "**/*.rs",
+        "**/*.java",
+        "**/*.cpp",
+        "**/*.c",
+        "**/*.h",
+        "**/*.md",
+        "**/*.json",
+        "**/*.yaml",
+        "**/*.yml",
+        "**/*.toml",
+        "**/*.conf",
+        "**/*.cfg",
+        "**/*.ini",
+        "**/*.txt",
+        "**/*.sql",
+        "**/*.html",
+        "**/*.css",
+        "**/*.scss",
+        "**/*.vue",
+        "**/*.jsx",
+        "**/*.tsx",
+        "**/Dockerfile*",
+        "**/docker-compose*.yml",
+        "**/Makefile",
+        "**/README*",
+        "**/.gitignore",
+        "**/.claude/**"
+      ],
+      "exclude": [
+        "**/.git/**",
+        "**/node_modules/**",
+        "**/vendor/**",
+        "**/target/**",
+        "**/dist/**",
+        "**/build/**",
+        "**/.env",
+        "**/.env.local",
+        "**/.env.production",
+        "**/secrets/**",
+        "**/.ssh/id_*",
+        "**/.aws/credentials",
+        "**/.docker/config.json"
+      ]
+    },
+    "execute": {
+      "enabled": true,
+      "patterns": [
+        "**/*.sh",
+        "**/npm",
+        "**/yarn",
+        "**/pnpm",
+        "**/cargo",
+        "**/go",
+        "**/python*",
+        "**/node",
+        "**/make",
+        "**/docker",
+        "**/docker-compose"
+      ],
+      "safe_mode": true,
+      "allow_sudo": false,
+      "timeout": 300000
+    }
+  },
+  "tools": {
+    "bash": {
+      "enabled": true,
+      "timeout": 120000,
+      "working_directory": "."
+    },
+    "file_operations": {
+      "enabled": true,
+      "backup_on_modify": true,
+      "max_file_size": "50MB"
+    },
+    "git": {
+      "enabled": true,
+      "allow_commit": true,
+      "allow_push": false,
+      "auto_stage": false
+    }
+  },
+  "development": {
+    "languages": {
+      "javascript": { "enabled": true, "node_modules_access": false },
+      "typescript": { "enabled": true, "node_modules_access": false },
+      "python": { "enabled": true, "venv_access": true },
+      "go": { "enabled": true, "mod_cache_access": false },
+      "rust": { "enabled": true, "target_access": false },
+      "shell": { "enabled": true }
+    },
+    "frameworks": {
+      "react": true,
+      "vue": true,
+      "svelte": true,
+      "django": true,
+      "flask": true,
+      "fastapi": true,
+      "gin": true,
+      "actix": true
+    }
+  },
+  "collaboration": {
+    "project_context": {
+      "auto_detect": true,
+      "include_readme": true,
+      "include_package_json": true,
+      "include_requirements": true,
+      "include_dockerfile": true
+    },
+    "code_style": {
+      "maintain_existing": true,
+      "suggest_improvements": true,
+      "auto_format": false
+    }
+  },
+  "security": {
+    "sensitive_files": {
+      "never_read": [
+        "**/.env*",
+        "**/secrets/**",
+        "**/.ssh/id_*",
+        "**/.aws/credentials",
+        "**/.docker/config.json",
+        "**/password*",
+        "**/secret*",
+        "**/key*",
+        "**/token*"
+      ],
+      "warn_on_access": [
+        "**/config/**",
+        "**/.config/**"
+      ]
+    },
+    "operations": {
+      "require_confirmation": [
+        "rm -rf",
+        "sudo",
+        "chmod 777",
+        "git push --force"
+      ]
+    }
+  }
+}

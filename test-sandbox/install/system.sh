@@ -12,30 +12,30 @@ init_common
 log "Installing system tools..."
 
 # Package lists for different systems
-UBUNTU_PACKAGES=(
-    "curl"
-    "git"
-    "build-essential"
-    "ca-certificates"
-    "gnupg"
-    "ripgrep"
-    "fd-find"
-    "bat"
-    "tree"
-    "htop"
-    "unzip"
-    "jq"
+declare -A UBUNTU_PACKAGES=(
+    ["curl"]="curl"
+    ["git"]="git"
+    ["build-essential"]="build-essential"
+    ["ca-certificates"]="ca-certificates"
+    ["gnupg"]="gnupg"
+    ["ripgrep"]="ripgrep"
+    ["fd-find"]="fd-find"
+    ["bat"]="bat"
+    ["tree"]="tree"
+    ["htop"]="htop"
+    ["unzip"]="unzip"
+    ["jq"]="jq"
 )
 
-MACOS_PACKAGES=(
-    "curl"
-    "git"
-    "ripgrep"
-    "fd"
-    "bat"
-    "tree"
-    "htop"
-    "jq"
+declare -A MACOS_PACKAGES=(
+    ["curl"]="curl"
+    ["git"]="git" 
+    ["ripgrep"]="ripgrep"
+    ["fd"]="fd"
+    ["bat"]="bat"
+    ["tree"]="tree"
+    ["htop"]="htop"
+    ["jq"]="jq"
 )
 
 install_system_packages() {
@@ -47,8 +47,8 @@ install_system_packages() {
                 sudo apt-get update -qq
             fi
             
-            for package_name in "${UBUNTU_PACKAGES[@]}"; do
-                install_package "$package_name"
+            for package_name in "${!UBUNTU_PACKAGES[@]}"; do
+                install_package "${UBUNTU_PACKAGES[$package_name]}"
             done
             
             # Special handling for bat on Ubuntu (command name conflict)
@@ -98,8 +98,8 @@ install_system_packages() {
                 fi
             fi
             
-            for package_name in "${MACOS_PACKAGES[@]}"; do
-                install_package "$package_name"
+            for package_name in "${!MACOS_PACKAGES[@]}"; do
+                install_package "${MACOS_PACKAGES[$package_name]}"
             done
             ;;
             

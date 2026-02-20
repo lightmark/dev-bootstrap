@@ -1,191 +1,360 @@
-# Production-Grade Development Environment Bootstrap
+# Universal Development Environment Bootstrap
 
-一键搭建现代化开发环境，支持本地和VPS部署。
+A comprehensive, production-ready bootstrap script that sets up development environments for both local machines (macOS) and VPS servers (Ubuntu). The script automatically detects your environment and configures essential tools, dotfiles, SSH keys, and Claude Teams integration.
 
-## 特性
+## Features
 
-- **一条命令安装**: `curl -sSL https://raw.githubusercontent.com/yourusername/dev-bootstrap/main/bootstrap.sh | bash`
-- **幂等性**: 可重复执行，不会破坏现有配置
-- **安全**: 自动备份现有文件，默认不覆盖用户配置
-- **跨平台**: 支持 Ubuntu 22.04/24.04 和 macOS
-- **模块化**: 可选择性安装组件
-- **现代工具**: tmux、fzf、ripgrep、fd、bat等
+- 🖥️ **Universal**: Works on both macOS (local) and Ubuntu (VPS) environments
+- 🤖 **Smart Detection**: Automatically detects environment type (local vs VPS)
+- 📦 **Package Management**: Installs essential development tools via Homebrew (macOS) or APT (Ubuntu)
+- 🔧 **Modular Design**: Enable/disable specific components as needed
+- 🔑 **SSH Integration**: Generates GitHub SSH keys with proper configuration
+- 🤝 **Claude Teams**: Sets up Claude AI integration for local development
+- 🛡️ **Safe Operations**: Dry-run mode, automatic backups, and idempotent execution
+- 📋 **Rich Logging**: Colored output with detailed progress information
 
-## 快速开始
-
-### 一条命令安装（推荐）
-
-```bash
-curl -sSL https://raw.githubusercontent.com/yourusername/dev-bootstrap/main/bootstrap.sh | bash
-```
-
-### 本地安装
+## Quick Start
 
 ```bash
-git clone https://github.com/yourusername/dev-bootstrap.git
+# Clone the repository
+git clone <your-repo-url> dev-bootstrap
 cd dev-bootstrap
-./bootstrap.sh
+
+# Make executable
+chmod +x bootstrap-new.sh
+
+# Local development environment
+./bootstrap-new.sh --role local
+
+# VPS server environment
+./bootstrap-new.sh --role vps --setup-github-key
 ```
 
-## 使用选项
+## Installation Modules
 
+| Module | Description | Local | VPS |
+|--------|-------------|-------|-----|
+| **packages** | Essential development tools (git, tmux, fzf, ripgrep, fd, bat, tree, htop, jq, direnv) | ✅ | ✅ |
+| **dotfiles** | Links configuration files from `configs/` directory | ✅ | ✅ |
+| **tmux** | Configures tmux with vi bindings, mouse support, and true color | ✅ | ✅ |
+| **shell** | Sets up bash history, aliases, and direnv integration | ✅ | ✅ |
+| **ssh** | Generates GitHub SSH keys and configures SSH client | ❌* | ✅ |
+| **claude** | Sets up Claude Teams integration for AI-assisted development | ✅ | ❌ |
+
+*\* SSH module can be explicitly enabled for local environments with `--setup-github-key`*
+
+## Command Line Options
+
+### Basic Options
+- `--role local|vps` - Specify environment role (auto-detected if not provided)
+- `--yes`, `-y` - Skip confirmation prompts
+- `--dry-run` - Preview changes without executing them
+- `--help`, `-h` - Show help information
+
+### Module Control
+- `--skip MODULE[,...]` - Skip specific modules (e.g., `--skip packages,ssh`)
+- `--only MODULE[,...]` - Run only specific modules (e.g., `--only tmux,shell`)
+
+### SSH Configuration
+- `--setup-github-key` - Generate GitHub SSH key (auto-enabled for VPS)
+- `--key-name NAME` - SSH key filename (default: `id_ed25519_github_dev`)
+- `--email EMAIL` - Email for SSH key (defaults to git config user.email)
+- `--alias ALIAS` - SSH host alias (default: `github-dev`)
+- `--no-alias` - Don't create SSH host alias
+- `--force` - Force regenerate SSH key if it exists
+
+## Usage Examples
+
+### Basic Setup
 ```bash
-# 查看帮助
-./bootstrap.sh --help
+# Local development machine
+./bootstrap-new.sh --role local
 
-# 预览将要安装的内容（不执行）
-./bootstrap.sh --dry-run
+# VPS server with GitHub access
+./bootstrap-new.sh --role vps --setup-github-key
 
-# 自动确认所有提示
-./bootstrap.sh --yes
-
-# 跳过特定组件
-./bootstrap.sh --skip tmux,vim
-
-# 只安装特定组件
-./bootstrap.sh --components system,fzf
+# Auto-detect environment (recommended)
+./bootstrap-new.sh
 ```
 
-## 组件说明
+### Advanced Configuration
+```bash
+# Custom SSH key setup
+./bootstrap-new.sh --role vps --key-name myproject_key --email dev@company.com
 
-| 组件 | 描述 | 默认安装 |
-|------|------|----------|
-| `system` | 基础系统工具（curl、git、build-essential、ripgrep、fd、bat等） | ✅ |
-| `tmux` | 终端复用器 + TPM插件管理器 + 现代化配置 | ✅ |
-| `fzf` | 模糊查找工具 + 键盘快捷键 + 集成配置 | ✅ |
-| `git` | Git配置 + 实用别名 + 全局gitignore | ✅ |
-| `ssh` | SSH客户端优化配置（KeepAlive、ControlMaster） | ❌ |
-| `vim` | 轻量级Vim配置（无插件管理器） | ❌ |
+# Skip package installation, only configure dotfiles
+./bootstrap-new.sh --skip packages --role local
 
-## 安装的工具
+# Only setup SSH and Claude integration
+./bootstrap-new.sh --only ssh,claude --setup-github-key
 
-### 系统工具
-- **ripgrep** (`rg`) - 快速文本搜索
-- **fd** - 快速文件查找
-- **bat** - 语法高亮的cat替代品  
-- **direnv** - 目录环境变量管理
-- **tree** - 目录树显示
-- **htop** - 系统监控
-- **jq** - JSON处理工具
+# Preview what would be installed
+./bootstrap-new.sh --dry-run
 
-### 开发工具
-- **tmux** - 终端复用器，配置了vi模式、鼠标支持、现代主题
-- **fzf** - 模糊查找，集成了Ctrl-T（文件）、Ctrl-R（历史）、Alt-C（目录）
-- **git** - 预配置了50+实用别名和安全默认值
+# Silent installation
+./bootstrap-new.sh --yes --role local
+```
 
-## 配置文件位置
+## What Gets Installed
 
-安装完成后，配置文件位于：
+### Packages (macOS via Homebrew)
+- git - Version control
+- tmux - Terminal multiplexer  
+- fzf - Fuzzy finder
+- ripgrep - Fast text search
+- fd - Fast file finder
+- bat - Enhanced cat with syntax highlighting
+- tree - Directory tree viewer
+- htop - Interactive process viewer
+- jq - JSON processor
+- direnv - Environment variable manager
 
-- `~/.tmux.conf` - tmux配置
-- `~/.bashrc` 或 `~/.zshrc` - shell配置（追加内容）
-- `~/.gitconfig` - git配置
-- `~/.gitignore_global` - 全局gitignore
-- `~/backups/` - 原有配置的备份
+### Packages (Ubuntu via APT)
+- git, tmux, fzf, ripgrep, fd-find, bat, tree, htop, jq
+- build-essential, curl, ca-certificates
+- direnv (installed manually from GitHub releases)
 
-## 验证安装
+*Note: Ubuntu packages `fd-find` and `batcat` are automatically symlinked as `fd` and `bat`*
 
-安装完成后，验证主要工具：
+### Configuration Files
+
+#### Tmux Configuration (`~/.tmux.conf`)
+- Vi-style key bindings for copy mode
+- Mouse support enabled
+- True color (24-bit) support
+- Intuitive pane splitting (| and -)
+- Status bar customization
+- Window/pane numbering starts at 1
+
+#### Shell Configuration (`~/.bashrc`)
+- Enhanced history settings (10k entries, no duplicates)
+- Multi-session history synchronization
+- direnv integration
+- Common aliases and shortcuts
+- PATH enhancements
+
+#### SSH Configuration (`~/.ssh/config`)
+- GitHub host alias configuration
+- Optimized connection settings
+- Identity file management
+- Connection multiplexing
+
+#### Claude Teams Integration (`~/.claude/settings.json`)
+- Full workspace access permissions
+- Multi-language development support
+- Safe execution permissions
+- Git integration (commit allowed, push disabled)
+- Automatic sensitive file filtering
+
+## SSH Key Management
+
+The bootstrap script generates ed25519 SSH keys for GitHub integration:
+
+### Key Features
+- **Secure**: Uses ed25519 algorithm (modern, fast, secure)
+- **Organized**: Custom key names to avoid conflicts
+- **Configured**: Automatic SSH client configuration
+- **Tested**: Validates connection to GitHub
+
+### SSH Workflow
+1. Generate SSH key pair in `~/.ssh/`
+2. Set proper permissions (600 for private, 644 for public)
+3. Add GitHub to known_hosts
+4. Configure SSH client with host alias
+5. Test connection and display public key
+
+### Adding Keys to GitHub
+
+After installation, add the displayed public key to GitHub:
+
+**For personal repositories:**
+- Go to [GitHub SSH Settings](https://github.com/settings/ssh/new)
+- Paste the public key and save
+
+**For organization/deploy keys:**
+- Go to repository → Settings → Deploy keys
+- Add key with appropriate permissions
+
+### Using SSH Keys
 
 ```bash
-# 检查工具版本
+# Clone with SSH alias (if configured)
+git clone git@github-dev:username/repository.git
+
+# Or use standard GitHub hostname
+git clone git@github.com:username/repository.git
+
+# Test SSH connection
+ssh -T git@github-dev
+# or
+ssh -T git@github.com
+```
+
+## Claude Teams Integration
+
+The Claude Teams module (local environments only) provides:
+
+### Features
+- **Workspace Access**: Full read/write permissions for development files
+- **Language Support**: JavaScript, TypeScript, Python, Go, Rust, Shell, and more
+- **Tool Integration**: npm, cargo, docker, git, and other development tools
+- **Security**: Automatic filtering of sensitive files (.env, keys, credentials)
+- **Git Integration**: Commit allowed, push disabled for safety
+
+### Supported File Types
+- Source code: `.js`, `.ts`, `.py`, `.go`, `.rs`, `.java`, `.cpp`, `.c`, etc.
+- Configuration: `.json`, `.yaml`, `.toml`, `.conf`, `.ini`
+- Documentation: `.md`, `.txt`, README files
+- Build files: `Dockerfile`, `Makefile`, `package.json`
+
+### Security Exclusions
+- Environment files (`.env*`)
+- SSH keys (`~/.ssh/id_*`)
+- AWS credentials (`~/.aws/credentials`)
+- Password/secret files
+- Build artifacts (`node_modules/`, `target/`, `dist/`)
+
+## Directory Structure
+
+```
+dev-bootstrap/
+├── bootstrap-new.sh          # Main bootstrap script
+├── configs/                  # Configuration templates
+│   ├── .tmux.conf           # Tmux configuration
+│   ├── .bashrc.snippet      # Bash configuration additions
+│   ├── .aliases             # Shell aliases
+│   ├── claude_settings.json # Claude Teams configuration
+│   └── ssh_config           # SSH configuration reference
+├── scripts/                  # Utility scripts (optional)
+├── .claude/                  # Claude integration (this repository)
+└── README.md                # This file
+```
+
+## Backups and Safety
+
+### Automatic Backups
+All modified files are automatically backed up to:
+```
+~/.bootstrap-backups/YYYYMMDD_HHMMSS/
+```
+
+### Safe Operations
+- **Idempotent**: Running multiple times is safe
+- **Dry-run**: Test with `--dry-run` before real installation
+- **Validation**: Checks existing configurations before modifying
+- **Rollback**: Easy rollback using timestamped backups
+
+### Error Handling
+- Comprehensive error trapping with line numbers
+- Graceful handling of missing dependencies
+- Clear error messages and troubleshooting hints
+- Non-destructive failures (won't break existing setup)
+
+## Environment Detection
+
+The script automatically detects your environment using these heuristics:
+
+| Environment Type | Detection Method |
+|------------------|------------------|
+| **VPS** | SSH connection detected (`$SSH_CONNECTION`, `$SSH_CLIENT`) |
+| **VPS** | systemd running (Linux server indicator) |
+| **Local** | macOS detected (`$OSTYPE` contains "darwin") |
+| **Local** | Fallback for unknown environments |
+
+Override detection with `--role local` or `--role vps`.
+
+## Troubleshooting
+
+### Common Issues
+
+**Package installation fails on Ubuntu:**
+```bash
+# Update package lists manually
+sudo apt-get update
+# Retry bootstrap
+./bootstrap-new.sh --role vps
+```
+
+**SSH key already exists:**
+```bash
+# Force regenerate
+./bootstrap-new.sh --only ssh --force --role vps
+```
+
+**Permission denied errors:**
+```bash
+# Ensure user has sudo access
+sudo -v
+# Run bootstrap as regular user (not root)
+./bootstrap-new.sh
+```
+
+**Homebrew installation fails on macOS:**
+```bash
+# Install Homebrew manually first
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+# Retry bootstrap
+./bootstrap-new.sh --role local
+```
+
+### Verification
+
+After installation, verify components:
+
+```bash
+# Check installed tools
+git --version
 tmux -V
 fzf --version
 rg --version
 fd --version
 bat --version
 
-# 测试tmux配置
+# Test tmux configuration
 tmux new-session -d -s test
-tmux list-sessions
 tmux kill-session -t test
 
-# 测试fzf快捷键
-# Ctrl-T: 查找文件
-# Ctrl-R: 搜索命令历史  
-# Alt-C: 切换目录
+# Test SSH key
+ssh -T git@github.com
 
-# 测试git别名
-git alias
-git lg  # 美化的git log
+# Check Claude integration (local only)
+ls -la ~/.claude/settings.json
 ```
 
-## 自定义配置
+## Contributing
 
-### 跳过不需要的组件
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test on both macOS and Ubuntu if possible
+5. Submit a pull request
 
-```bash
-# 只安装基础工具，跳过tmux
-./bootstrap.sh --skip tmux
+### Development Guidelines
+- Follow existing code style (bash with `set -euo pipefail`)
+- Add comprehensive error handling
+- Support both dry-run and real execution
+- Update documentation for new features
+- Test edge cases and error conditions
 
-# 只安装系统工具和fzf
-./bootstrap.sh --components system,fzf
-```
+## License
 
-### 修改配置模板
+MIT License - see [LICENSE](LICENSE) file for details.
 
-编辑 `configs/` 目录下的模板文件：
+## Changelog
 
-- `configs/tmux.conf` - tmux配置模板
-- `configs/bashrc.snippet` - bash配置片段
-- `configs/vimrc.minimal` - 轻量vim配置
+### Latest Version
+- ✅ Added Claude Teams integration for local environments
+- ✅ Improved SSH key management with custom naming
+- ✅ Enhanced error handling and user feedback
+- ✅ Added comprehensive dry-run support
+- ✅ Modular architecture with flexible component selection
 
-### 添加自定义组件
+### Previous Versions
+- Initial release with basic package installation
+- Added SSH key generation and GitHub integration
+- Implemented environment auto-detection
+- Added tmux and shell configuration
 
-1. 在 `install/` 目录创建新的安装脚本
-2. 在 `bootstrap.sh` 中添加组件到相应列表
-3. 确保脚本source了 `install/common.sh`
+## Support
 
-## 安全说明
-
-- **备份**: 所有被修改的文件都会自动备份到 `backups/` 目录
-- **非破坏性**: 默认只追加配置，不覆盖现有内容
-- **权限检查**: 拒绝以root用户运行，需要sudo权限时才提示
-- **网络安全**: 只从官方源下载，验证校验和
-
-## 故障排除
-
-### 常见问题
-
-1. **Permission denied**: 确保以普通用户运行，不要使用sudo
-2. **Command not found**: 重启shell或执行 `source ~/.bashrc`
-3. **Tmux插件未安装**: 启动tmux后按 `prefix + I` 安装插件
-4. **fzf快捷键不生效**: 确保重新加载shell配置
-
-### 查看日志
-
-```bash
-# 查看安装日志
-cat bootstrap.log
-
-# 检查备份文件
-ls -la backups/
-```
-
-### 回滚配置
-
-```bash
-# 恢复备份的配置文件
-cp backups/bashrc.backup.20240101_120000 ~/.bashrc
-cp backups/.tmux.conf.backup.20240101_120000 ~/.tmux.conf
-```
-
-## 系统要求
-
-### Ubuntu
-- Ubuntu 22.04 LTS 或更新版本
-- 具有sudo权限的用户账户
-- 网络连接
-
-### macOS  
-- macOS 12.0 或更新版本
-- 安装了Command Line Tools或Xcode
-- 网络连接
-
-## 贡献
-
-欢迎提交Issue和Pull Request！
-
-## 许可证
-
-MIT License - 详见 [LICENSE](LICENSE) 文件。
+For issues and feature requests, please open an issue on GitHub.

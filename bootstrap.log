@@ -1,0 +1,55 @@
+=== Development Environment Bootstrap ===
+Started at: Thu Feb 19 01:34:07 MST 2026
+
+[0;32m[INFO][0m Detected OS: macos with package manager: brew
+[0;32m[INFO][0m Created directory: /Users/lightmark/dev-bootstrap/backups
+This will install development tools and configure your environment.
+Continue? (y/N): 
+[0;32m[INFO][0m Installing components: system,tmux,fzf,git
+[0;32m[INFO][0m Installing component: system
+[0;34m[DEBUG][0m Detected shell: zsh, config: /Users/lightmark/.zshrc
+[0;32m[INFO][0m Installing system tools...
+/Users/lightmark/dev-bootstrap/install/system.sh: line 11: curl: unbound variable
+Continue? (y/N): === Development Environment Bootstrap ===
+Started at: Fri Feb 20 00:05:59 MST 2026
+
+[0;32m[INFO][0m Detected OS: macos with package manager: brew
+This will install development tools and configure your environment.
+
+[0;32m[INFO][0m Installation cancelled by user
+=== Development Environment Bootstrap ===
+Started at: Fri Feb 20 00:06:12 MST 2026
+
+[0;32m[INFO][0m Detected OS: macos with package manager: brew
+This will install development tools and configure your environment.
+Continue? (y/N): 
+[0;32m[INFO][0m Installing components: system,tmux,fzf,git
+[0;32m[INFO][0m Installing component: system
+/Users/lightmark/dev-bootstrap/install/common.sh: line 7: RED: readonly variable
+=== Development Environment Bootstrap ===
+Started at: Fri Feb 20 00:07:15 MST 2026
+
+[0;32m[INFO][0m Detected OS: macos with package manager: brew
+This will install development tools and configure your environment.
+Continue? (y/N): 
+[0;32m[INFO][0m Installing components: system,tmux,fzf,git
+[0;32m[INFO][0m Installing component: system
+/Users/lightmark/dev-bootstrap/install/common.sh: line 11: RED: readonly variable
+=== Development Environment Bootstrap ===
+Started at: Fri Feb 20 00:08:54 MST 2026
+
+[0;32m[INFO][0m Detected OS: macos with package manager: brew
+This will install development tools and configure your environment.
+Continue? (y/N): 
+[0;32m[INFO][0m Installing components: system,tmux,fzf,git
+[0;32m[INFO][0m Installing component: system
+/Users/lightmark/dev-bootstrap/install/common.sh: line 36: SCRIPT_DIR: readonly variable
+=== Development Environment Bootstrap ===
+Started at: Fri Feb 20 00:09:37 MST 2026
+
+[0;32m[INFO][0m Detected OS: macos with package manager: brew
+This will install development tools and configure your environment.
+Continue? (y/N): 
+[0;32m[INFO][0m Installing components: system,tmux,fzf,git
+[0;32m[INFO][0m Installing component: system
+/Users/lightmark/dev-bootstrap/install/system.sh: line 7: SCRIPT_DIR: readonly variable

@@ -1,0 +1,55 @@
+# Bootstrap aliases
+
+# Enhanced ls
+alias ll='ls -alF'
+alias la='ls -A'
+alias l='ls -CF'
+
+# Colorized grep
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
+
+# Git shortcuts
+alias gs='git status'
+alias ga='git add'
+alias gc='git commit'
+alias gp='git push'
+alias gl='git pull'
+alias gd='git diff'
+alias gco='git checkout'
+alias gb='git branch'
+
+# Navigation
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+
+# Modern tool aliases (if available)
+if command -v bat >/dev/null 2>&1; then
+    alias cat='bat'
+fi
+
+if command -v fd >/dev/null 2>&1; then
+    alias find='fd'
+fi
+
+if command -v rg >/dev/null 2>&1; then
+    alias grep='rg'
+fi
+
+# System shortcuts
+alias h='history'
+alias j='jobs -l'
+alias which='type -a'
+alias path='echo -e ${PATH//:/\\n}'
+
+# Safety nets
+alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'
+
+# Process management
+alias psg='ps aux | grep -v grep | grep -i'
+alias topcpu='ps auxf | sort -nr -k 3 | head -10'
+alias topmem='ps auxf | sort -nr -k 4 | head -10'
