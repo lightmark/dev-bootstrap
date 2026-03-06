@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# Send stdin to terminal clipboard using OSC52
+set -euo pipefail
+
+data=$(cat | base64 | tr -d '\n')
+printf "\033]52;c;%s\a" "$data"

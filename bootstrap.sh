@@ -37,9 +37,9 @@ USE_SSH_ALIAS=true
 FORCE_SSH=false
 
 # Available modules
-readonly ALL_MODULES="packages,dotfiles,tmux,shell,ssh,claude"
-DEFAULT_LOCAL_MODULES="packages,dotfiles,tmux,shell,claude"
-DEFAULT_VPS_MODULES="packages,dotfiles,tmux,shell,ssh"
+readonly ALL_MODULES="packages,dotfiles,bin,tmux,shell,ssh,claude"
+DEFAULT_LOCAL_MODULES="packages,dotfiles,bin,tmux,shell,claude"
+DEFAULT_VPS_MODULES="packages,dotfiles,bin,tmux,shell,ssh"
 
 # Error handler
 error_exit() {
@@ -191,7 +191,8 @@ OPTIONS:
 MODULES:
     packages              Install essential packages (tmux, git, fzf, ripgrep, etc.)
     dotfiles              Link configuration files from configs/
-    tmux                  Configure tmux with vi bindings and mouse support
+    bin                   Setup ~/bin directory and OSC52 clipboard helper
+    tmux                  Configure tmux with vi bindings, mouse support, and OSC52 clipboard
     shell                 Configure bash history and aliases
     ssh                   Generate GitHub SSH key and configure (VPS/explicit only)
     claude                Setup Claude Teams integration (local environments only)
@@ -491,10 +492,12 @@ set -ga terminal-overrides ",*256col*:Tc"
 # Vi mode
 setw -g mode-keys vi
 bind-key -T copy-mode-vi 'v' send -X begin-selection
-bind-key -T copy-mode-vi 'y' send -X copy-selection
+bind-key -T copy-mode-vi 'y' send -X copy-pipe-and-cancel "osc52"
+bind-key -T copy-mode-vi Enter send -X copy-pipe-and-cancel "osc52"
 
 # Mouse support
 set -g mouse on
+set -g history-limit 200000
 
 # Split panes
 bind | split-window -h
@@ -508,7 +511,47 @@ set -g base-index 1
 setw -g pane-base-index 1
 EOF
     
-    log_info "Configured tmux with vi bindings and mouse support"
+    log_info "Configured tmux with vi bindings, mouse support, and OSC52 clipboard"
+}
+
+# Module: Setup bin directory and osc52
+module_bin() {
+    log_info "Setting up bin directory and osc52 clipboard helper..."
+    
+    local bin_dir="$HOME/bin"
+    local source_osc52="${SCRIPT_DIR}/bin/osc52"
+    local target_osc52="$bin_dir/osc52"
+    
+    # Create bin directory if it doesn't exist
+    if [[ "$DRY_RUN" == "true" ]]; then
+        log_debug "Would create directory: $bin_dir"
+    else
+        mkdir -p "$bin_dir"
+        log_info "Created bin directory: $bin_dir"
+    fi
+    
+    # Create symlink for osc52
+    if [[ -f "$source_osc52" ]]; then
+        safe_symlink "$source_osc52" "$target_osc52"
+    else
+        log_warn "OSC52 script not found: $source_osc52"
+        return 1
+    fi
+    
+    # Add ~/bin to PATH in shell configs
+    local path_line='export PATH="$HOME/bin:$PATH"'
+    
+    # Add to .bashrc
+    if [[ -f "$HOME/.bashrc" ]] || [[ "$DRY_RUN" == "true" ]]; then
+        safe_append "$HOME/.bashrc" "$path_line" "HOME/bin"
+    fi
+    
+    # Add to .zshrc if it exists
+    if [[ -f "$HOME/.zshrc" ]]; then
+        safe_append "$HOME/.zshrc" "$path_line" "HOME/bin"
+    fi
+    
+    log_info "OSC52 clipboard helper setup completed"
 }
 
 # Module: Configure shell
@@ -806,6 +849,13 @@ main() {
                 ;;
             dotfiles)
                 if module_dotfiles; then
+                    completed_modules+=("$module")
+                else
+                    skipped_modules+=("$module (failed)")
+                fi
+                ;;
+            bin)
+                if module_bin; then
                     completed_modules+=("$module")
                 else
                     skipped_modules+=("$module (failed)")

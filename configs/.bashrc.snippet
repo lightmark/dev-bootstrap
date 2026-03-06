@@ -134,7 +134,11 @@ else
     PS1='\u@\h:\w\$ '
 fi
 
-# Add local bin to PATH if it exists
+# Add user bin directories to PATH if they exist
+if [ -d "$HOME/bin" ]; then
+    export PATH="$HOME/bin:$PATH"
+fi
+
 if [ -d "$HOME/.local/bin" ]; then
     export PATH="$HOME/.local/bin:$PATH"
 fi

@@ -220,11 +220,26 @@ if has('mouse')
     set mouse=a
 endif
 
-" Clipboard integration
-if has('unnamedplus')
-    set clipboard=unnamedplus
-elseif has('clipboard')
-    set clipboard=unnamed
+" OSC52 Clipboard integration for remote SSH sessions
+function! OSC52Copy() range
+    let selected_text = getline(a:firstline, a:lastline)
+    let text = join(selected_text, "\n")
+    let b64 = system('echo ' . shellescape(text) . ' | base64 | tr -d "\n"')
+    call system('printf "\033]52;c;' . b64 . '\a" > /dev/tty')
+endfunction
+
+" Set clipboard to use OSC52 for remote sessions, fallback to system clipboard
+if $SSH_CONNECTION != '' || $SSH_CLIENT != '' || $SSH_TTY != ''
+    " SSH session detected - use OSC52
+    vnoremap <silent> y :call OSC52Copy()<CR>y
+    nnoremap <silent> yy :call OSC52Copy()<CR>yy
+else
+    " Local session - use system clipboard
+    if has('unnamedplus')
+        set clipboard=unnamedplus
+    elseif has('clipboard')
+        set clipboard=unnamed
+    endif
 endif
 
 " Disable arrow keys in insert mode (optional training wheels)

@@ -36,7 +36,8 @@ chmod +x bootstrap-new.sh
 |--------|-------------|-------|-----|
 | **packages** | Essential development tools (git, tmux, fzf, ripgrep, fd, bat, tree, htop, jq, direnv) | ✅ | ✅ |
 | **dotfiles** | Links configuration files from `configs/` directory | ✅ | ✅ |
-| **tmux** | Configures tmux with vi bindings, mouse support, and true color | ✅ | ✅ |
+| **bin** | Sets up ~/bin directory and OSC52 clipboard helper for remote sessions | ✅ | ✅ |
+| **tmux** | Configures tmux with vi bindings, mouse support, and OSC52 clipboard | ✅ | ✅ |
 | **shell** | Sets up bash history, aliases, and direnv integration | ✅ | ✅ |
 | **ssh** | Generates GitHub SSH keys and configures SSH client | ❌* | ✅ |
 | **claude** | Sets up Claude Teams integration for AI-assisted development | ✅ | ❌ |
@@ -132,6 +133,80 @@ chmod +x bootstrap-new.sh
 - direnv integration
 - Common aliases and shortcuts
 - PATH enhancements
+
+## Remote Clipboard (OSC52 + tmux + SSH)
+
+This bootstrap implements a robust OSC52 clipboard solution that automatically copies text from remote sessions (tmux/vim) to your local machine's clipboard.
+
+### Features
+
+- **Universal Remote Support**: Works across SSH sessions without X11 forwarding
+- **Terminal Compatibility**: Supports Warp, iTerm2, Kitty, WezTerm, Alacritty, Windows Terminal
+- **Intelligent Fallback**: Automatically detects SSH sessions and available clipboard tools
+- **Nested Session Support**: Works even inside nested tmux sessions
+- **Enhanced History**: 200K lines of tmux history for better scrollback
+
+### Usage in tmux
+
+```bash
+# Enter copy mode
+Ctrl-b [
+# Select text with vi-style bindings
+v (begin selection)
+y (copy to clipboard) 
+# or
+Enter (copy to clipboard)
+
+# Additional bindings:
+Ctrl-v (rectangle selection)
+H (start of line)
+L (end of line)
+```
+
+### Usage in Neovim
+
+The configuration automatically detects SSH sessions:
+
+```bash
+# Standard vim commands work automatically
+y (copy in normal/visual mode)
+
+# Enhanced mappings for SSH:
+<leader>y (visual mode - copy selection via OSC52)
+<leader>yy (normal mode - copy current line via OSC52)
+```
+
+### How It Works
+
+1. **OSC52 Helper**: A lightweight script (`~/bin/osc52`) that encodes and transmits clipboard data
+2. **Smart Detection**: Automatically uses OSC52 in SSH sessions, system clipboard locally  
+3. **tmux Integration**: Copy-mode bindings pipe through OSC52 with fallback to system clipboard
+4. **Neovim Integration**: Automatic SSH detection with enhanced visual feedback
+5. **Path Management**: ~/bin is automatically added to PATH for osc52 availability
+
+### Installation Flow
+
+The bootstrap script automatically:
+- Installs the `osc52` helper to `~/bin/osc52`
+- Adds `~/bin` to your PATH in shell configurations
+- Configures tmux with OSC52-first clipboard bindings
+- Sets up Neovim with intelligent SSH detection
+- Creates symlinks and ensures proper permissions
+
+### Testing
+
+Verify the setup works:
+```bash
+# Test osc52 directly
+echo "hello world" | osc52
+
+# Test in tmux
+tmux new-session
+# Enter copy mode, select text, press 'y'
+
+# Test in neovim (SSH session)
+# Select text, press <leader>y
+```
 
 #### SSH Configuration (`~/.ssh/config`)
 - GitHub host alias configuration
